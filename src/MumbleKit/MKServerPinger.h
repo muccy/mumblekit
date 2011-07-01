@@ -1,5 +1,4 @@
-/* Copyright (C) 2009-2010 Mikkel Krautz <mikkel@krautz.dk>
-   Copyright (c) 2005-2010 Thorvald Natvig, <thorvald@natvig.com>
+/* Copyright (C) 2009-2011 Mikkel Krautz <mikkel@krautz.dk>
 
    All rights reserved.
 
@@ -29,43 +28,26 @@
    SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#define MKCertificateItemCommonName   @"CN"
-#define MKCertificateItemCountry      @"C"
-#define MKCertificateItemOrganization @"O"
-#define MKCertificateItemSerialNumber @"serialNumber"
+typedef struct _MKServerPingerResult {
+    UInt32  version;
+    UInt32  cur_users;
+    UInt32  max_users;
+    UInt32  bandwidth;
+    double  ping;
+} MKServerPingerResult;
 
-@interface MKCertificate : NSObject {
-	NSData          *_derCert;
-	NSData          *_derPrivKey;
+@protocol MKServerPingerDelegate
+- (void) serverPingerResult:(MKServerPingerResult *)result;
+@end
 
-	NSDictionary    *_subjectDict;
-	NSDictionary    *_issuerDict;
-
-	NSDate          *_notAfterDate;
-	NSDate          *_notBeforeDate;
-
-	NSMutableArray  *_emailAddresses;
-	NSMutableArray  *_dnsEntries;
+@interface MKServerPinger : NSObject {
+    NSData                      *_address;
+    id<MKServerPingerDelegate>  _delegate;
 }
 
-+ (MKCertificate *) certificateWithCertificate:(NSData *)cert privateKey:(NSData *)privkey;
-+ (MKCertificate *) selfSignedCertificateWithName:(NSString *)name email:(NSString *)email;
-+ (MKCertificate *) certificateWithPKCS12:(NSData *)pkcs12 password:(NSString *)password;
+- (id) initWithHostname:(NSString *)hostname port:(NSString *)port;
+- (void) dealloc;
 
-- (BOOL) hasCertificate;
-- (BOOL) hasPrivateKey;
-
-- (NSData *) exportPKCS12WithPassword:(NSString *)password;
-
-- (NSData *) digest;
-- (NSString *) hexDigest;
-
-- (NSString *) commonName;
-- (NSString *) emailAddress;
-- (NSString *) issuerName;
-- (NSDate *) notBefore;
-- (NSDate *) notAfter;
-- (NSString *) issuerItem:(NSString *)item;
-- (NSString *) subjectItem:(NSString *)item;
-
+- (id<MKServerPingerDelegate>)delegate;
+- (void) setDelegate:(id<MKServerPingerDelegate>)delegate;
 @end
