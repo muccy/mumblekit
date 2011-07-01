@@ -833,6 +833,14 @@ static void MKConnectionUDPCallback(CFSocketRef sock, CFSocketCallBackType type,
 	if (errorCode <= errSSLProtocol && errorCode > errSSLLast) {
 		[self _handleSslError:streamError];
 	}
+    else {
+        // Tell our delegate that we failed
+        if ([_delegate respondsToSelector:@selector(connection:failedWithError:)]) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [_delegate connection:self failedWithError:streamError];
+            });
+        }
+    }
 
 	NSLog(@"MKConnection: Error: %@", streamError);
 }

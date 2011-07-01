@@ -89,6 +89,7 @@ typedef enum {
 @protocol MKConnectionDelegate
 - (void) connectionOpened:(MKConnection *)conn;
 - (void) connectionClosed:(MKConnection *)conn;
+- (void) connection:(MKConnection *)conn failedWithError:(NSError *)error;
 - (void) connection:(MKConnection *)conn trustFailureInCertificateChain:(NSArray *)chain;
 - (void) connection:(MKConnection *)conn rejectedWithReason:(MKRejectReason)reason explanation:(NSString *)explanation;
 @end
